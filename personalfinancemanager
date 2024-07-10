@@ -1,0 +1,170 @@
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Scanner;
+
+public class PersonalFinanceManager {
+    private static class Record {
+        private String category;
+        private double amount;
+        private String date;
+
+        public Record(String category, double amount, String date) {
+            this.category = category;
+            this.amount = amount;
+            this.date = date;
+        }
+
+        public String getCategory() {
+            return category;
+        }
+
+        public double getAmount() {
+            return amount;
+        }
+
+        public String getDate() {
+            return date;
+        }
+
+        @Override
+        public String toString() {
+            return "Record{" +
+                    "category='" + category + '\'' +
+                    ", amount=" + amount +
+                    ", date='" + date + '\'' +
+                    '}';
+        }
+    }
+
+    private static ArrayList<Record> incomes = new ArrayList<>();
+    private static ArrayList<Record> expenses = new ArrayList<>();
+    private static HashMap<String, Double> budgets = new HashMap<>();
+    private static Scanner scanner = new Scanner(System.in);
+
+    public static void main(String[] args) {
+        int choice;
+        do {
+            System.out.println("\nPersonal Finance Manager");
+            System.out.println("1. Add Income");
+            System.out.println("2. Remove Income");
+            System.out.println("3. Add Expense");
+            System.out.println("4. Remove Expense");
+            System.out.println("5. Set Budget");
+            System.out.println("6. View Monthly Summary");
+            System.out.println("7. View Category-wise Spending");
+            System.out.println("8. Exit");
+            System.out.print("Enter your choice: ");
+            choice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+
+            switch (choice) {
+                case 1:
+                    addIncome();
+                    break;
+                case 2:
+                    removeIncome();
+                    break;
+                case 3:
+                    addExpense();
+                    break;
+                case 4:
+                    removeExpense();
+                    break;
+                case 5:
+                    setBudget();
+                    break;
+                case 6:
+                    viewMonthlySummary();
+                    break;
+                case 7:
+                    viewCategoryWiseSpending();
+                    break;
+                case 8:
+                    System.out.println("Exiting...");
+                    break;
+                default:
+                    System.out.println("Invalid choice! Please try again.");
+            }
+        } while (choice != 8);
+    }
+
+    private static void addIncome() {
+        System.out.print("Enter income category: ");
+        String category = scanner.nextLine();
+        System.out.print("Enter amount: ");
+        double amount = scanner.nextDouble();
+        scanner.nextLine(); // Consume newline
+        System.out.print("Enter date (YYYY-MM-DD): ");
+        String date = scanner.nextLine();
+        incomes.add(new Record(category, amount, date));
+        System.out.println("Income added successfully!");
+    }
+
+    private static void removeIncome() {
+        System.out.print("Enter income category: ");
+        String category = scanner.nextLine();
+        incomes.removeIf(income -> income.getCategory().equals(category));
+        System.out.println("Income removed successfully!");
+    }
+
+    private static void addExpense() {
+        System.out.print("Enter expense category: ");
+        String category = scanner.nextLine();
+        System.out.print("Enter amount: ");
+        double amount = scanner.nextDouble();
+        scanner.nextLine(); // Consume newline
+        System.out.print("Enter date (YYYY-MM-DD): ");
+        String date = scanner.nextLine();
+        expenses.add(new Record(category, amount, date));
+        System.out.println("Expense added successfully!");
+    }
+
+    private static void removeExpense() {
+        System.out.print("Enter expense category: ");
+        String category = scanner.nextLine();
+        expenses.removeIf(expense -> expense.getCategory().equals(category));
+        System.out.println("Expense removed successfully!");
+    }
+
+    private static void setBudget() {
+        System.out.print("Enter budget category: ");
+        String category = scanner.nextLine();
+        System.out.print("Enter amount: ");
+        double amount = scanner.nextDouble();
+        scanner.nextLine(); // Consume newline
+        budgets.put(category, amount);
+        System.out.println("Budget set successfully!");
+    }
+
+    private static void viewMonthlySummary() {
+        System.out.print("Enter month (YYYY-MM): ");
+        String month = scanner.nextLine();
+        double totalIncome = 0;
+        double totalExpense = 0;
+        for (Record income : incomes) {
+            if (income.getDate().startsWith(month)) {
+                totalIncome += income.getAmount();
+            }
+        }
+        for (Record expense : expenses) {
+            if (expense.getDate().startsWith(month)) {
+                totalExpense += expense.getAmount();
+            }
+        }
+        System.out.println("Monthly Summary for " + month);
+        System.out.println("Total Income: " + totalIncome);
+        System.out.println("Total Expense: " + totalExpense);
+        System.out.println("Net Savings: " + (totalIncome - totalExpense));
+    }
+
+    private static void viewCategoryWiseSpending() {
+        HashMap<String, Double> spending = new HashMap<>();
+        for (Record expense : expenses) {
+            spending.put(expense.getCategory(), spending.getOrDefault(expense.getCategory(), 0.0) + expense.getAmount());
+        }
+        System.out.println("Category-wise Spending");
+        for (String category : spending.keySet()) {
+            System.out.println(category + ": " + spending.get(category));
+        }
+    }
+}
